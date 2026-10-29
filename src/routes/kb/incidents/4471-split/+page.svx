@@ -1,0 +1,69 @@
+---
+layout: runbook
+title: '#4471 · three problems, not one'
+owner: e1morenotitanx
+status: open
+reviewed: 2026-10-28
+signature: 'v1.eyJzdWIiOiIxNzY0IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTMyNDEyNTgsImV4cCI6MTc5MzMyNzY1OH0.CEfpJxVvp_TyiI2wjyAqHhrfzr4yp9b_2VYgAWRbgpQ'
+---
+
+<script>
+  import ProblemTable from '#lib/kb/ProblemTable.svelte';
+  import CauseTable from '#lib/kb/CauseTable.svelte';
+  import Callout from '#lib/kb/Callout.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+
+  const repo = 'https://github.com/e1morenotitanx/mega-s01e03-what-it-shows/issues';
+  const filed = { parser: `${repo}/1`, hint: `${repo}/2`, 'one-day move': `${repo}/3` };
+</script>
+
+[#4471](/kb/incidents/4471) is marked known: one issue, one fix queued. It holds three problems.
+The queued parser fix closes only the first one.
+
+<Callout kind="warn">
+Fixing the parser does not close #4471. The other two problems keep coming in after the fix,
+and each one now has its own ticket.
+</Callout>
+
+## The problems
+
+<ProblemTable ticket={4471} {filed} />
+
+- **`parser`**: the shared parser reads every date month first. Tenants that write the day
+  first get the day and month swapped: "the calendar invite for 7 April landed on 4 July".
+  This is the bug #4471 names.
+- **`hint`**: the booking-v3 form prints `MM/DD/YYYY` under its date field. Day-first
+  tenants on booking-v3 type month first, as the hint says, and the form reads the date
+  their way. The parser fix does not reach it: the fix is the hint.
+- **`one-day move`**: the date moves by one day instead of swapping: "Tuesday 6 October
+  showed as Monday", "client in Lisbon got Tuesday, client in Toronto got Monday". A swap
+  cannot do that. It looks like a timezone bug. The desk noted these reports, but its
+  table counts them under `parser`.
+
+## How the reports were placed
+
+Each report is placed by its tenant and the way it came in, with `causes.ts`, not by its
+subject line or by intake's tag. Intake tags from the reporter's browser, and its tag
+disagrees with the cause for some of these reports. The table below is the desk's own
+view, with that count:
+
+<CauseTable ticket={4471} />
+
+Every report text was read as well. All `parser` and `hint` reports describe a day and
+month swap, or no date at all. The reports in `one-day move` are the only ones that
+describe a one-day shift.
+
+## Why one ticket held three
+
+[Decision 0001](/kb/decisions/0001-dedupe-by-subject) merges on subject alone. These three
+problems share the same subjects ("Wrong day on the invite", "Date is wrong"), so the rule
+merged them. Its consequence was written for the other case, the same bug under different
+subjects. It does not say what happens when different bugs share a subject.
+
+## Lessons
+
+- A subject says what the reporter saw, not what broke. Before you mark a big ticket known,
+  check that the fix you queue explains every report in it.
+- Count reports by id. The ticket export repeats some rows.
+
+<RenderStamp {signature} />
