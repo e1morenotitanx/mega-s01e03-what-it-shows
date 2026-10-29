@@ -17,13 +17,21 @@ signature: 'v1.eyJzdWIiOiIxNzY0IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpY
   const filed = { parser: `${repo}/1`, hint: `${repo}/2`, 'one-day move': `${repo}/3` };
 </script>
 
-[#4471](/kb/incidents/4471) is marked known: one issue, one fix queued. It holds three problems.
-The queued parser fix closes only the first one.
+[#4471](/kb/incidents/4471) was marked known: one issue, one fix queued. It held three problems.
+Engineering closed #4471 on 5 October. That closed two of them. The third is still open.
 
 <Callout kind="warn">
-Fixing the parser does not close #4471. The other two problems keep coming in after the fix,
-and each one now has its own ticket.
+The one-day move is still open. Neither the parser fix nor retiring booking-v3 explains a date
+that moves by one day. Do not merge new one-day reports into #4471: they belong to its own ticket.
 </Callout>
+
+## Status
+
+| problem | outcome |
+|---|---|
+| `parser` | fixed: `fix(dates): parse dd/mm for eu locales` |
+| `hint` | won't fix: the booking-v3 form is retired |
+| `one-day move` | open: no fix yet |
 
 ## The problems
 
@@ -34,7 +42,7 @@ and each one now has its own ticket.
   This is the bug #4471 names.
 - **`hint`**: the booking-v3 form prints `MM/DD/YYYY` under its date field. Day-first
   tenants on booking-v3 type month first, as the hint says, and the form reads the date
-  their way. The parser fix does not reach it: the fix is the hint.
+  their way. The parser fix does not reach it. Engineering retired booking-v3 instead.
 - **`one-day move`**: the date moves by one day instead of swapping: "Tuesday 6 October
   showed as Monday", "client in Lisbon got Tuesday, client in Toronto got Monday". A swap
   cannot do that. It looks like a timezone bug. The desk noted these reports, but its
